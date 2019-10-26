@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.audiolibros.Aplicacion;
 import com.example.audiolibros.Libro;
+import com.example.audiolibros.MainActivity;
 import com.example.audiolibros.R;
 
 import java.io.IOException;
@@ -124,5 +125,15 @@ public class DetalleFragment extends Fragment implements
     }
     @Override public int getAudioSessionId() {
         return 0;
+    }
+
+    @Override
+    public void onResume() {
+        DetalleFragment detalleFragment = (DetalleFragment)
+        getFragmentManager().findFragmentById(R.id.fragment_detalle);
+        if (detalleFragment == null){
+            ((MainActivity) getActivity()).mostrarElementos((false));
+        }
+        super.onResume();
     }
 }

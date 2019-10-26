@@ -104,4 +104,10 @@ public class SelectorFragment extends Fragment {
         return vista;
 
     }
+
+    @Override
+    public void onResume() {
+        ((MainActivity) getActivity()).mostrarElementos(true);
+        super.onResume();
+    }
 }

@@ -7,19 +7,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiolibros.fragments.DetalleFragment;
 import com.example.audiolibros.fragments.SelectorFragment;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
+
+    private AppBarLayout appBarLayout;
+    private TabLayout tabs;
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +40,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        //Navigation Drawer
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.drawer_open,R.string.drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,7 +54,17 @@ public class MainActivity extends AppCompatActivity {
                 irUltimoVisitado();
             }
         });
-
+        appBarLayout = (AppBarLayout)findViewById(R.id.appBarLayout);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         /*Aplicacion app = (Aplicacion) getApplication();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setAdapter(app.getAdaptador());
@@ -57,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.contenedor_pequeno, primerFragment).commit();
         }
         //Pestañas
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.addTab(tabs.newTab().setText("Todos"));
         tabs.addTab(tabs.newTab().setText("Nuevos"));
         tabs.addTab(tabs.newTab().setText("Leidos"));
@@ -85,6 +114,39 @@ public class MainActivity extends AppCompatActivity {
         });
 
         adaptador = ((Aplicacion) getApplicationContext()).getAdaptador();
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == R.id.nav_todos) {
+            adaptador.setGenero("");
+            adaptador.notifyDataSetChanged();
+        } else if (id == R.id.nav_epico) {
+            adaptador.setGenero(Libro.G_EPICO);
+            adaptador.notifyDataSetChanged();
+        } else if (id == R.id.nav_XIX) {
+            adaptador.setGenero(Libro.G_S_XIX);
+            adaptador.notifyDataSetChanged();
+        } else if (id == R.id.nav_suspense) {
+            adaptador.setGenero(Libro.G_SUSPENSE);
+            adaptador.notifyDataSetChanged();
+        }// …
+    DrawerLayout drawer = (DrawerLayout) findViewById(
+            R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)){
+            drawer.closeDrawer(GravityCompat.START);
+        } else{
+            super.onBackPressed();
+        }
 
     }
 
@@ -155,6 +217,18 @@ public class MainActivity extends AppCompatActivity {
             mostrarDetalle(id);
         } else {
             Toast.makeText(this,"Sin última vista",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void mostrarElementos(boolean mostrar){
+        appBarLayout.setExpanded(mostrar);
+        toggle.setDrawerIndicatorEnabled(mostrar);
+        if (mostrar){
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            tabs.setVisibility(View.VISIBLE);
+        }else{
+            tabs.setVisibility(View.GONE);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
     }
 }
