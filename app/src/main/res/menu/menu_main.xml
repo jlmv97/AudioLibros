@@ -14,13 +14,13 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom|withText"
         android:title="Último leido"/>
-    <item
+    <!--<item
         android:id="@+id/menu_buscar"
         app:actionViewClass="android.widget.SearchView"
         android:orderInCategory="93"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom|collapseActionView"
-        android:title="Buscar"/>
+        app:showAsAction="collapseActionView"
+        android:title="Buscar"/>-->
     <item
         android:id="@+id/menu_acerca"
         android:orderInCategory="110"

@@ -1,5 +1,6 @@
 package com.example.audiolibros.fragments;
 
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.MediaController;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.example.audiolibros.Aplicacion;
 import com.example.audiolibros.Libro;

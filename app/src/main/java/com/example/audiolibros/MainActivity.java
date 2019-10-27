@@ -1,10 +1,15 @@
 package com.example.audiolibros;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,8 +19,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.audiolibros.fragments.DetalleFragment;
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity
                 onBackPressed();
             }
         });
+        //handleIntent(intent);
         /*Aplicacion app = (Aplicacion) getApplication();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setAdapter(app.getAdaptador());
@@ -78,13 +86,11 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_SHORT).show();
             }
         });*/
-        if ((findViewById(R.id.contenedor_pequeno) != null) &&
-                (getSupportFragmentManager().findFragmentById(
-                        R.id.contenedor_pequeno) == null)){
+        int idContenedor =(findViewById(R.id.contenedor_pequeno) != null) ?
+                R.id.contenedor_pequeno : R.id.contenedor_izquierdo;
             SelectorFragment primerFragment = new SelectorFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.contenedor_pequeno, primerFragment).commit();
-        }
+            getSupportFragmentManager().beginTransaction().add(R.id.contenedor_pequeno, primerFragment).commit();
+
         //Pestañas
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.addTab(tabs.newTab().setText("Todos"));
@@ -149,13 +155,32 @@ public class MainActivity extends AppCompatActivity
         }
 
     }
-
+//Resolver bug
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_selector, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_buscar);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextChange(String query) {
+                        adaptador.setBusqueda(query);
+                        adaptador.notifyDataSetChanged();
+                        return false;
+                    }
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+                });
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -164,12 +189,14 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.menu_preferencias) {
-            Toast.makeText(this, "Preferencias", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Preferencias", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(this,PreferenciasActivity.class);
+            startActivity(i);
             return true;
         } else if (id == R.id.menu_ultimo) {
             irUltimoVisitado();
             return true;
-        } else if (id == R.id.menu_buscar) {
+        } /*else if (id == R.id.menu_buscar) {
             return true;
         } else if (id == R.id.menu_acerca) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -177,7 +204,7 @@ public class MainActivity extends AppCompatActivity
             builder.setPositiveButton(android.R.string.ok, null);
             builder.create().show();
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -200,12 +227,12 @@ public class MainActivity extends AppCompatActivity
             transaccion.replace(R.id.contenedor_pequeno, nuevoFragment);
             transaccion.addToBackStack(null);
             transaccion.commit();
+        }
             SharedPreferences pref = getSharedPreferences(
                     "com.example.audiolibros_internal", MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
             editor.putInt("ultimo", id);
             editor.commit();
-        }
     }
 
 

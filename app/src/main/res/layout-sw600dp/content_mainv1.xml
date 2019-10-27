@@ -17,6 +17,13 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
+    <LinearLayout
+        android:id="@+id/contenedor_izquierdo"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
     <fragment
         android:id="@+id/fragment_detalle"
         android:name="com.example.audiolibros.fragments.DetalleFragment"
