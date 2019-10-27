@@ -193,18 +193,18 @@ public class MainActivity extends AppCompatActivity
             Intent i = new Intent(this,PreferenciasActivity.class);
             startActivity(i);
             return true;
-        } else if (id == R.id.menu_ultimo) {
+        } /*else if (id == R.id.menu_ultimo) {
             irUltimoVisitado();
-            return true;
+            return true;/*
         } /*else if (id == R.id.menu_buscar) {
             return true;
-        } else if (id == R.id.menu_acerca) {
+        }*/ else if (id == R.id.menu_acerca) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Mensaje de Acerca De");
             builder.setPositiveButton(android.R.string.ok, null);
             builder.create().show();
             return true;
-        }*/
+        }
         return super.onOptionsItemSelected(item);
     }
 
